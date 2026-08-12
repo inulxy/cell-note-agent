@@ -1,0 +1,270 @@
+{
+  "fixture_kind": "synthetic_harness_validation",
+  "retrieval_spec": {
+    "species": ["Homo sapiens"],
+    "tissues": ["PBMC", "peripheral blood"],
+    "conditions": ["healthy"],
+    "modalities": ["scRNA-seq", "scATAC-seq"],
+    "pairing_requirement": "same_cell",
+    "preferred_files": [
+      "rna_count_matrix",
+      "atac_fragments",
+      "cell_metadata"
+    ],
+    "fallback_files": ["atac_peak_matrix", "fastq"],
+    "exclude": ["bulk", "spatial", "same_sample_only"]
+  },
+  "datasets": [
+    {
+      "dataset_id": "DEMO-PBMC-MULTIOME-001",
+      "metadata": {
+        "title": "Synthetic PBMC same-cell multiome recovery case",
+        "species": "Homo sapiens",
+        "tissue": "PBMC",
+        "condition": "healthy",
+        "license": "CC0-1.0",
+        "fixture": true
+      },
+      "required_roles": [
+        "rna_count_matrix",
+        "atac_fragments",
+        "cell_metadata"
+      ],
+      "required_verified_claims": [
+        "species",
+        "modality",
+        "pairing_level",
+        "genome_build",
+        "license"
+      ],
+      "claims": [
+        {
+          "claim_key": "species",
+          "expected_value": "Homo sapiens",
+          "rule": "AUTHORITATIVE_SOURCE"
+        },
+        {
+          "claim_key": "modality",
+          "expected_value": "paired_multiome",
+          "rule": "TWO_INDEPENDENT_SOURCES"
+        },
+        {
+          "claim_key": "pairing_level",
+          "expected_value": "same_cell",
+          "rule": "REQUIRES_EXECUTABLE"
+        },
+        {
+          "claim_key": "genome_build",
+          "expected_value": "GRCh38",
+          "rule": "TWO_INDEPENDENT_SOURCES"
+        },
+        {
+          "claim_key": "license",
+          "expected_value": "CC0-1.0",
+          "rule": "AUTHORITATIVE_SOURCE"
+        }
+      ],
+      "initial_evidence": [
+        {
+          "evidence_id": "ev-species-repository",
+          "claim_key": "species",
+          "observed_value": "Homo sapiens",
+          "supports": true,
+          "strength": "DECLARATIVE",
+          "source_type": "official_repository",
+          "source_ref": "fixture://geo/series/DEMO-PBMC-MULTIOME-001",
+          "source_locator": "/organism",
+          "method": "structured_field",
+          "tool_version": "fixture-adapter/1.0"
+        },
+        {
+          "evidence_id": "ev-modality-repository",
+          "claim_key": "modality",
+          "observed_value": "paired_multiome",
+          "supports": true,
+          "strength": "DECLARATIVE",
+          "source_type": "official_repository",
+          "source_ref": "fixture://geo/series/DEMO-PBMC-MULTIOME-001",
+          "source_locator": "/study_type",
+          "method": "structured_field",
+          "tool_version": "fixture-adapter/1.0"
+        },
+        {
+          "evidence_id": "ev-modality-paper",
+          "claim_key": "modality",
+          "observed_value": "paired_multiome",
+          "supports": true,
+          "strength": "STRUCTURAL",
+          "source_type": "paper_methods",
+          "source_ref": "fixture://paper/DEMO-PAPER-001",
+          "source_locator": "methods.multiome_protocol",
+          "method": "fixture_claim_extraction",
+          "tool_version": "fixture-adapter/1.0"
+        },
+        {
+          "evidence_id": "ev-pairing-paper",
+          "claim_key": "pairing_level",
+          "observed_value": "same_cell",
+          "supports": true,
+          "strength": "DECLARATIVE",
+          "source_type": "paper_methods",
+          "source_ref": "fixture://paper/DEMO-PAPER-001",
+          "source_locator": "methods.same_nucleus_statement",
+          "method": "fixture_claim_extraction",
+          "tool_version": "fixture-adapter/1.0"
+        },
+        {
+          "evidence_id": "ev-genome-repository",
+          "claim_key": "genome_build",
+          "observed_value": "GRCh38",
+          "supports": true,
+          "strength": "DECLARATIVE",
+          "source_type": "official_repository",
+          "source_ref": "fixture://geo/series/DEMO-PBMC-MULTIOME-001",
+          "source_locator": "/genome_build",
+          "method": "structured_field",
+          "tool_version": "fixture-adapter/1.0"
+        },
+        {
+          "evidence_id": "ev-license-record",
+          "claim_key": "license",
+          "observed_value": "CC0-1.0",
+          "supports": true,
+          "strength": "DECLARATIVE",
+          "source_type": "license_record",
+          "source_ref": "fixture://license/DEMO-PBMC-MULTIOME-001",
+          "source_locator": "/spdx_id",
+          "method": "structured_field",
+          "tool_version": "fixture-adapter/1.0"
+        }
+      ],
+      "initial_artifacts": [
+        {
+          "artifact_id": "rna-matrix",
+          "role": "rna_count_matrix",
+          "source_uri": "fixture://geo/files/rna_filtered_feature_bc_matrix.h5",
+          "size_bytes": 180000000,
+          "source": "GEO",
+          "discovered_via": "series_supplementary_files"
+        },
+        {
+          "artifact_id": "cell-metadata",
+          "role": "cell_metadata",
+          "source_uri": "fixture://geo/files/per_barcode_metrics.csv.gz",
+          "size_bytes": 6000000,
+          "source": "GEO",
+          "discovered_via": "series_supplementary_files"
+        }
+      ],
+      "graph_nodes": [
+        {
+          "id": "study:DEMO-PBMC-MULTIOME-001",
+          "type": "Study",
+          "label": "DEMO-PBMC-MULTIOME-001"
+        },
+        {
+          "id": "paper:DEMO-PAPER-001",
+          "type": "Publication",
+          "label": "DEMO-PAPER-001"
+        },
+        {
+          "id": "file:rna-matrix",
+          "type": "File",
+          "label": "RNA matrix"
+        }
+      ],
+      "graph_edges": [
+        {
+          "source": "paper:DEMO-PAPER-001",
+          "predicate": "describes",
+          "target": "study:DEMO-PBMC-MULTIOME-001",
+          "evidence_id": "ev-modality-paper"
+        },
+        {
+          "source": "study:DEMO-PBMC-MULTIOME-001",
+          "predicate": "has_file",
+          "target": "file:rna-matrix",
+          "evidence_id": "ev-modality-repository"
+        }
+      ],
+      "recovery": {
+        "issue": "MISSING_ATAC_FRAGMENTS",
+        "request_cost": 4,
+        "byte_cost": 50000,
+        "artifacts": [
+          {
+            "artifact_id": "atac-fragments",
+            "role": "atac_fragments",
+            "source_uri": "fixture://sra/derived/atac_fragments.tsv.gz",
+            "size_bytes": 3200000000,
+            "source": "SRA-linked-study",
+            "discovered_via": "accession_neighborhood_expansion"
+          }
+        ],
+        "evidence": [
+          {
+            "evidence_id": "ev-pairing-barcode",
+            "claim_key": "pairing_level",
+            "observed_value": "same_cell",
+            "supports": true,
+            "strength": "EXECUTABLE",
+            "source_type": "barcode_validator",
+            "source_ref": "fixture://validator/barcode-overlap",
+            "source_locator": "/intersection_rate",
+            "source_payload": {
+              "rna_barcodes": 12450,
+              "atac_barcodes": 12310,
+              "matched_barcodes": 11980,
+              "intersection_rate": 0.9732
+            },
+            "method": "normalized_barcode_set_overlap",
+            "tool_version": "barcode-pairing/1.0"
+          },
+          {
+            "evidence_id": "ev-genome-fragment-header",
+            "claim_key": "genome_build",
+            "observed_value": "GRCh38",
+            "supports": true,
+            "strength": "STRUCTURAL",
+            "source_type": "remote_file_header",
+            "source_ref": "fixture://sra/derived/atac_fragments.tsv.gz",
+            "source_locator": "/contigs",
+            "source_payload": {
+              "contigs": ["chr1", "chr2", "chrX"],
+              "declared_reference": "GRCh38"
+            },
+            "method": "fixture_header_inspection",
+            "tool_version": "file-audit/1.0"
+          }
+        ],
+        "graph_nodes": [
+          {
+            "id": "project:DEMO-SRP-001",
+            "type": "SequencingProject",
+            "label": "DEMO-SRP-001"
+          },
+          {
+            "id": "file:atac-fragments",
+            "type": "File",
+            "label": "ATAC fragments"
+          }
+        ],
+        "graph_edges": [
+          {
+            "source": "study:DEMO-PBMC-MULTIOME-001",
+            "predicate": "linked_to",
+            "target": "project:DEMO-SRP-001",
+            "evidence_id": "ev-modality-repository"
+          },
+          {
+            "source": "project:DEMO-SRP-001",
+            "predicate": "has_derived_file",
+            "target": "file:atac-fragments",
+            "evidence_id": "ev-genome-fragment-header"
+          }
+        ]
+      }
+    }
+  ]
+}
+

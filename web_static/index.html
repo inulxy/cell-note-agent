@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f7f5">
+  <title>CellNote · 单细胞表观组智能工作台</title>
+  <link rel="stylesheet" href="/style.css?v=28">
+</head>
+<body>
+  <div id="appShell" class="app-shell">
+    <aside id="sidebar" class="sidebar" aria-label="任务导航">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div><strong>CellNote</strong><small>Epigenomics agent</small></div>
+        <button id="closeSidebar" class="icon-button mobile-only" type="button" aria-label="关闭导航">×</button>
+      </div>
+
+      <button id="newProject" class="new-project" type="button"><span>＋</span> 新建任务</button>
+
+      <label class="project-search">
+        <span aria-hidden="true">⌕</span>
+        <input id="projectSearch" type="search" placeholder="搜索任务" aria-label="搜索任务">
+      </label>
+
+      <div class="sidebar-section-title"><span>最近任务</span><span id="projectCount"></span></div>
+      <div id="projects" class="project-list" aria-live="polite"></div>
+
+      <div class="sidebar-footer">
+        <div class="server-state"><i id="healthDot"></i><span id="healthText">正在连接服务器</span></div>
+        <small>数据与运行记录保留在服务器</small>
+      </div>
+    </aside>
+
+    <button id="sidebarBackdrop" class="drawer-backdrop" type="button" aria-label="关闭导航"></button>
+
+    <main class="workspace">
+      <header class="topbar">
+        <div class="topbar-main">
+          <button id="openSidebar" class="icon-button mobile-only" type="button" aria-label="打开导航">☰</button>
+          <div class="project-heading">
+            <div class="eyebrow">CellNote workspace</div>
+            <h1 id="projectTitle">开始一个新任务</h1>
+          </div>
+          <div class="topbar-actions">
+            <span id="projectState" class="state-pill"><i></i>就绪</span>
+            <button id="toggleDetails" class="details-toggle" type="button" aria-expanded="true">运行详情</button>
+          </div>
+        </div>
+        <div id="stageRail" class="stage-rail" aria-label="当前科学工作流阶段">
+          <span data-stage="0">需求</span><i></i>
+          <span data-stage="1">检索</span><i></i>
+          <span data-stage="2">候选</span><i></i>
+          <span data-stage="3">清单</span><i></i>
+          <span data-stage="4">下载</span><i></i>
+          <span data-stage="5">QC</span><i></i>
+          <span data-stage="6">交付</span>
+        </div>
+      </header>
+
+      <section class="chat-stage" aria-label="对话区">
+        <div id="conversation" class="conversation" aria-live="polite"></div>
+      </section>
+
+      <div class="composer-zone">
+        <div id="quickPrompts" class="quick-prompts" aria-label="快捷任务">
+          <button type="button" data-prompt="搜索人类 PBMC scATAC 公开数据集">搜索 PBMC scATAC</button>
+          <button type="button" data-prompt="搜索人类 10x Multiome 公开数据集，优先 GRCh38">搜索 Human Multiome</button>
+          <button type="button" data-prompt="请分析 /ssd/deecamp/cellnotes/EpiAgent_data/Li2023a/Li2023a-brain_tissue/Li2023a-brain_tissue-cell_by_peak.h5ad">分析服务器数据</button>
+        </div>
+        <form id="chatForm" class="composer">
+          <textarea id="prompt" rows="1" maxlength="4000" placeholder="描述要搜索的数据，或粘贴服务器文件路径…" aria-label="发送给 CellNote"></textarea>
+          <div class="composer-actions">
+            <span id="characterCount" class="character-count">0 / 4000</span>
+            <button id="sendButton" class="send-button" type="submit" aria-label="发送消息">↑</button>
+          </div>
+        </form>
+        <p class="composer-note">下载和 QC 执行前，CellNote 会明确展示计划并等待你的确认。</p>
+      </div>
+    </main>
+
+    <aside id="detailsPanel" class="details-panel" aria-label="运行详情">
+      <div class="details-header">
+        <div><div class="eyebrow">Inspector</div><h2>运行详情</h2></div>
+        <button id="closeDetails" class="icon-button" type="button" aria-label="关闭运行详情">×</button>
+      </div>
+      <div class="detail-tabs" role="tablist" aria-label="详情分类">
+        <button class="detail-tab active" type="button" role="tab" aria-selected="true" data-panel="tasksPanel">任务</button>
+        <button class="detail-tab" type="button" role="tab" aria-selected="false" data-panel="dataPanel">数据</button>
+        <button class="detail-tab" type="button" role="tab" aria-selected="false" data-panel="filesPanel">文件</button>
+      </div>
+
+      <section id="tasksPanel" class="detail-view active" role="tabpanel">
+        <div class="section-heading"><h3>任务进度</h3><span id="activeJobCount"></span></div>
+        <div id="jobs" class="empty-block">暂无任务</div>
+      </section>
+
+      <section id="dataPanel" class="detail-view" role="tabpanel">
+        <div class="section-heading"><h3>候选数据集</h3><span id="candidateCount"></span></div>
+        <div id="candidates" class="empty-block">搜索完成后显示</div>
+      </section>
+
+      <section id="filesPanel" class="detail-view" role="tabpanel">
+        <div class="section-heading"><h3>结果文件</h3><span id="artifactCount"></span></div>
+        <div id="artifacts" class="empty-block">暂无产物</div>
+      </section>
+    </aside>
+    <button id="detailsBackdrop" class="details-backdrop" type="button" aria-label="关闭运行详情"></button>
+  </div>
+
+  <div id="toastRegion" class="toast-region" aria-live="assertive"></div>
+  <script src="/app.js?v=29"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "datasets": {
+    "Li2023a": {
+      "path": "/ssd/deecamp/cellnotes/EpiAgent_data/Li2023a/Li2023a-brain_tissue/Li2023a-brain_tissue-cell_by_peak.h5ad",
+      "dataset_id": "Li2023a",
+      "notes": "Li2023a brain tissue cell x peak matrix"
+    },
+    "LI2023": {
+      "path": "/ssd/deecamp/cellnotes/EpiAgent_data/Li2023a/Li2023a-brain_tissue/Li2023a-brain_tissue-cell_by_peak.h5ad",
+      "dataset_id": "Li2023a",
+      "notes": "Alias for Li2023a peak matrix"
+    },
+    "Li2023": {
+      "path": "/ssd/deecamp/cellnotes/EpiAgent_data/Li2023a/Li2023a-brain_tissue/Li2023a-brain_tissue-cell_by_peak.h5ad",
+      "dataset_id": "Li2023a",
+      "notes": "Alias for Li2023a peak matrix"
+    }
+  }
+}

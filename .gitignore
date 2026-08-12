@@ -1,0 +1,35 @@
+.venv/
+.pi/
+.pip-cache/
+.pip-tmp/
+.webdeps/
+.tmp/
+.search-fix-test-*/
+.search-smoke-*/
+cell_note.egg-info/
+state/
+.env
+.env.*
+!.env.example
+configs/web.env
+__pycache__/
+*.py[cod]
+._*
+.DS_Store
+outputs/
+
+# Generated or large analysis artifacts
+demo_pbmc/processed/
+*.npz
+*.parquet
+*.h5ad
+*.h5mu
+runs/
+reference/
+corpus/
+agent_benchmark/
+*benchmark*/
+# golden fixture binaries: fetched via fixtures/fetch_fixtures.sh, never committed
+fixtures/*.h5
+fixtures/*.tsv.gz
+fixtures/*.tmp

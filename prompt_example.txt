@@ -1,0 +1,42 @@
+# scEpiAgent — prompt examples for Pi coding agent
+# Start: run ./setup_pi.sh then `pi` from the repo root.
+# Force a skill: /skill:sc-epi-agent   or   /skill:scatac-fragment-qc
+
+# ---------- Router / full workflow ----------
+Run the full scATAC / multiome curation-to-corpus workflow.
+Confirm one results root under results/, then route to the right pipeline.
+
+# ---------- scATAC (SnapATAC2) ----------
+Run SnapATAC2 QC on this fragments file.
+Fragments: /path/to/fragments.tsv.gz
+Dataset id: pbmc_scatac
+Results root: results/mvp_pbmc
+Start with /skill:scatac-fragment-qc, stage by stage. Show the exact command and wait for my confirmation before each stage.
+
+# ---------- scRNA (scanpy, RNA=only / multiome RNA) ----------
+Run scanpy QC and clustering on this 10x matrix.
+Input: /path/to/filtered_feature_bc_matrix
+Dataset id: pbmc_rna
+Use /skill:scrna-qc. Ask me to confirm QC thresholds after pre-filter plots.
+
+# ---------- Multiome (muon) ----------
+Process this 10x Multiome dataset: RNA matrix + ATAC fragments.
+RNA: /path/to/rna
+ATAC fragments: /path/to/atac_fragments.tsv.gz
+Dataset id: pbmc_multiome
+Use /skill:multiome-qc, then map ATAC to cCRE and prepare FM handoff.
+
+# ---------- Curation only ----------
+Discover public human scATAC-seq and multiome datasets from GEO and ENCODE.
+Use /skill:curation-pipeline with configs/mvp.json. Do not download large files yet.
+
+# ---------- FM handoff ----------
+Package the processed datasets under results/ into an FM-ready corpus with data cards and train/val/test split.
+Use /skill:handoff-pipeline.
+
+# ---------- Rules (remind the agent) ----------
+- Prefer calling scripts/*.py with --stage=...; do not invent ad-hoc bioinformatics code.
+- Ask progressively; do not front-load later-stage parameters.
+- Show the exact final command and wait for confirmation before execution.
+- Reuse one confirmed results root; derive stage subdirs automatically (07a_<id>/, 07c_<id>/, ...).
+- Do not silently rerun if outputs already exist and are non-empty.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Dialogue Governance"
+  short_description: "Constrained adaptive dialogue for CellNoteAgent"
+  default_prompt: "Use current workflow evidence and allowed actions to produce a safe, adaptive CellNoteAgent response."

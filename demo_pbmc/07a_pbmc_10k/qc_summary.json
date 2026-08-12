@@ -1,0 +1,24 @@
+{
+  "dataset_id": "pbmc_10k",
+  "genome_build": "GRCh38",
+  "n_cells_import": 10246,
+  "n_features": 165434,
+  "n_cells_pass": 10172,
+  "fraction_pass": 0.9927776693343744,
+  "tsse_median": 0.48721951182949347,
+  "fragments_median": 22225.5,
+  "blacklist_frac_median": 0.0,
+  "leiden_res": 1.0,
+  "n_clusters": 5,
+  "doublet_rate": 0.08,
+  "representation_quality": "approximate",
+  "input_files": {
+    "peak_matrix": "/Users/lixinyu/Desktop/DeeCamp/signac_pbmc_reproduce/data/10k_pbmc_ATACv2_nextgem_Chromium_Controller_filtered_peak_bc_matrix.h5",
+    "singlecell_csv": "/Users/lixinyu/Desktop/DeeCamp/signac_pbmc_reproduce/data/10k_pbmc_ATACv2_nextgem_Chromium_Controller_singlecell.csv"
+  },
+  "mapping": {
+    "vocab_size": 165434,
+    "mean_nonzero_ccres_per_cell": 29626.36875737318,
+    "unmapped_frac": 0.0
+  }
+}

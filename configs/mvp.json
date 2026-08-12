@@ -1,0 +1,87 @@
+{
+  "project_name": "deecamp-sc-epigenomics-mvp",
+  "species": "Homo sapiens",
+  "genome_build": "GRCh38",
+  "deliverable": "per_dataset_peak_matrix",
+  "sources": [
+    "ncbi_geo",
+    "encode"
+  ],
+  "max_results_per_query": 25,
+  "request_timeout_seconds": 30,
+  "request_retries": 3,
+  "ncbi_email": "18922111399lxy@gmail.com",
+  "ncbi_api_key_env": "NCBI_API_KEY",
+  "output_dir": "outputs",
+  "queries": {
+    "scatac": [
+      "scATAC-seq",
+      "\"single cell ATAC-seq\"",
+      "\"single nucleus ATAC-seq\"",
+      "snATAC-seq",
+      "\"single cell chromatin accessibility\""
+    ],
+    "multiome": [
+      "\"single cell multiome\"",
+      "\"RNA ATAC multiome\"",
+      "\"paired RNA and ATAC\"",
+      "\"10x Multiome\"",
+      "SNARE-seq",
+      "SHARE-seq",
+      "sci-CAR"
+    ]
+  },
+  "policy": {
+    "minimum_modality_confidence": 0.7,
+    "require_human": true,
+    "require_downloadable_file_hint": false,
+    "manual_review_on_unknown_pairing": true,
+    "allow_scrna_only": false
+  },
+  "acquisition": {
+    "budget": {
+      "max_requests": 100,
+      "max_bytes": 20000000000,
+      "max_recovery_rounds": 2,
+      "approval_download_bytes": 2000000000
+    }
+  },
+  "crawler": {
+    "sources": [
+      "geo",
+      "literature"
+    ],
+    "contact_email": "18922111399lxy@gmail.com",
+    "max_requests": 100,
+    "max_bytes": 100000000,
+    "timeout_seconds": 30,
+    "retries": 3,
+    "resolve_ena_runs": true,
+    "probe_remote_files": false,
+    "ena_accessions_per_request": 1,
+    "max_ena_accessions": 25,
+    "max_ena_runs": 200
+  },
+  "processing": {
+    "target_genome_build": "GRCh38",
+    "output_feature_space": "per_dataset_peaks",
+    "build_consensus_peak_matrix": false,
+    "scatac_fragment": {
+      "min_fragments": 1000,
+      "max_fragments": 100000,
+      "min_tsse": 4.0,
+      "max_blacklist_frac": 0.05,
+      "min_frip": 0.1,
+      "peak_calling": "dataset"
+    },
+    "scatac_peak_matrix": {
+      "min_peaks": 500,
+      "min_counts": 1000,
+      "min_cells_per_peak": 10
+    },
+    "multiome": {
+      "min_pair_overlap": 0.5,
+      "rna_is_supporting_only": true
+    }
+  }
+}

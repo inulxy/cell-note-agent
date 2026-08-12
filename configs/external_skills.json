@@ -1,0 +1,523 @@
+{
+  "schema_version": "1.0",
+  "purpose": "Trusted external Agent Skills and official references for scATAC, multiome, and scRNA-side processing. External skills are consulted through adapters; CellNoteAgent keeps canonical outputs and provenance.",
+  "trust_policy": {
+    "default_action": "consult_or_adapter_wrap_only",
+    "never_execute_remote_code_directly": true,
+    "pin_before_vendor": true,
+    "required_review_fields": [
+      "source.repo_or_url",
+      "source.path",
+      "source.ref",
+      "license",
+      "trust.rationale",
+      "cellnote_contract"
+    ],
+    "canonical_invariant": "All ATAC-bearing inputs must produce peak_matrices/<dataset_id>/cell_x_peak.npz and peaks.bed before data-card and manifest handoff."
+  },
+  "skills": [
+    {
+      "id": "kdense-scanpy",
+      "kind": "agent_skill",
+      "display_name": "K-Dense Scanpy",
+      "source": {
+        "repo_or_url": "K-Dense-AI/scientific-agent-skills",
+        "path": "skills/scanpy",
+        "ref": "main",
+        "url": "https://github.com/K-Dense-AI/scientific-agent-skills/tree/main/skills/scanpy",
+        "raw_skill_url": "https://raw.githubusercontent.com/K-Dense-AI/scientific-agent-skills/main/skills/scanpy/SKILL.md"
+      },
+      "license": "per-skill license metadata; review before vendoring",
+      "trust": {
+        "level": "approved_reference",
+        "rationale": [
+          "Widely used Agent Skills collection with explicit Scanpy workflow documentation.",
+          "Uses established scverse tooling and bundled scripts for reproducible scRNA steps.",
+          "Only used for RNA-side QC/annotation; ATAC model input still follows CellNoteAgent contract."
+        ]
+      },
+      "modalities": ["scRNA", "multiome_RNA"],
+      "roles": ["rna_qc", "rna_preprocess", "rna_cluster", "rna_annotation", "multiome_rna_side"],
+      "core_for": ["multiome", "scrna_reference"],
+      "cellnote_contract": {
+        "inputs": ["rna matrix, h5ad, 10x mtx/h5, or converted AnnData"],
+        "allowed_outputs": ["rna.h5ad", "cell_metadata.csv", "marker tables", "qc figures"],
+        "must_not_produce": ["tokenized ATAC cells"],
+        "next_cellnote_skill": "multiome-qc or RNA supporting QC"
+      }
+    },
+    {
+      "id": "kdense-anndata",
+      "kind": "agent_skill",
+      "display_name": "K-Dense AnnData",
+      "source": {
+        "repo_or_url": "K-Dense-AI/scientific-agent-skills",
+        "path": "skills/anndata",
+        "ref": "main",
+        "url": "https://github.com/K-Dense-AI/scientific-agent-skills/tree/main/skills/anndata",
+        "raw_skill_url": "https://raw.githubusercontent.com/K-Dense-AI/scientific-agent-skills/main/skills/anndata/SKILL.md"
+      },
+      "license": "per-skill license metadata; review before vendoring",
+      "trust": {
+        "level": "approved_reference",
+        "rationale": [
+          "AnnData is the common object model used by Scanpy, SnapATAC2, and many scverse workflows.",
+          "Useful for I/O hygiene, metadata preservation, and h5ad interoperability."
+        ]
+      },
+      "modalities": ["scRNA", "scATAC", "multiome"],
+      "roles": ["anndata_io", "metadata_schema", "h5ad_interop"],
+      "core_for": ["multiome", "scrna_reference", "scatac_peak_matrix", "scatac_fragments"],
+      "cellnote_contract": {
+        "inputs": ["h5ad or matrix plus obs/var metadata"],
+        "allowed_outputs": ["validated h5ad", "metadata schema notes"],
+        "must_not_produce": ["unversioned feature vocab"],
+        "next_cellnote_skill": "normalize-to-peak-matrix or handoff-pipeline"
+      }
+    },
+    {
+      "id": "gptomics-atac-qc",
+      "kind": "agent_skill",
+      "display_name": "GPTomics ATAC QC",
+      "source": {
+        "repo_or_url": "GPTomics/bioSkills",
+        "path": "atac-seq/atac-qc",
+        "ref": "main",
+        "url": "https://github.com/GPTomics/bioSkills/tree/main/atac-seq/atac-qc",
+        "raw_skill_url": "https://raw.githubusercontent.com/GPTomics/bioSkills/main/atac-seq/atac-qc/SKILL.md"
+      },
+      "license": "repository/license review required before vendoring",
+      "trust": {
+        "level": "approved_reference",
+        "rationale": [
+          "Focuses on ENCODE-style ATAC quality metrics: TSS enrichment, FRiP, library complexity, mitochondrial fraction, and fragment-size periodicity.",
+          "Matches CellNoteAgent QC requirements before peak matrix generation."
+        ]
+      },
+      "modalities": ["bulk_ATAC", "scATAC", "multiome_ATAC"],
+      "roles": ["atac_qc", "encode_thresholds", "fragment_qc"],
+      "core_for": ["scatac_fragments", "multiome"],
+      "cellnote_contract": {
+        "inputs": ["fragments.tsv.gz, bam, peaks, or QC metric tables"],
+        "allowed_outputs": ["qc_summary.json", "qc_report.html", "review_queue entries"],
+        "must_not_bypass": ["normalize-to-peak-matrix"],
+        "next_cellnote_skill": "normalize-to-peak-matrix"
+      }
+    },
+    {
+      "id": "gptomics-atac-peak-calling",
+      "kind": "agent_skill",
+      "display_name": "GPTomics ATAC Peak Calling",
+      "source": {
+        "repo_or_url": "GPTomics/bioSkills",
+        "path": "atac-seq/atac-peak-calling",
+        "ref": "main",
+        "url": "https://github.com/GPTomics/bioSkills/tree/main/atac-seq/atac-peak-calling",
+        "raw_skill_url": "https://raw.githubusercontent.com/GPTomics/bioSkills/main/atac-seq/atac-peak-calling/SKILL.md"
+      },
+      "license": "repository/license review required before vendoring",
+      "trust": {
+        "level": "approved_reference",
+        "rationale": [
+          "Covers MACS/Genrich/HMMRATAC peak calling and IDR/pseudoreplicate concepts.",
+          "Directly supports fragment-derived peak matrices for our canonical representation."
+        ]
+      },
+      "modalities": ["bulk_ATAC", "scATAC", "multiome_ATAC"],
+      "roles": ["peak_calling", "peak_matrix_generation"],
+      "core_for": ["scatac_fragments", "multiome"],
+      "cellnote_contract": {
+        "inputs": ["filtered fragments or alignments"],
+        "allowed_outputs": ["peaks.bed", "narrowPeak/gappedPeak", "peak calling provenance"],
+        "required_downstream_output": "peak_matrices/<dataset_id>/peaks.bed",
+        "next_cellnote_skill": "normalize-to-peak-matrix"
+      }
+    },
+    {
+      "id": "gptomics-consensus-peakset",
+      "kind": "agent_skill",
+      "display_name": "GPTomics Consensus Peakset",
+      "source": {
+        "repo_or_url": "GPTomics/bioSkills",
+        "path": "atac-seq/consensus-peakset",
+        "ref": "main",
+        "url": "https://github.com/GPTomics/bioSkills/tree/main/atac-seq/consensus-peakset",
+        "raw_skill_url": "https://raw.githubusercontent.com/GPTomics/bioSkills/main/atac-seq/consensus-peakset/SKILL.md"
+      },
+      "license": "repository/license review required before vendoring",
+      "trust": {
+        "level": "approved_reference",
+        "rationale": [
+          "Useful when building a fixed peak universe across samples, donors, or batches.",
+          "Aligned with our requirement to normalize heterogeneous ATAC input before model-facing features."
+        ]
+      },
+      "modalities": ["scATAC", "multiome_ATAC", "bulk_ATAC"],
+      "roles": ["consensus_peakset", "feature_space_intermediate"],
+      "core_for": ["scatac_fragments", "multiome"],
+      "cellnote_contract": {
+        "inputs": ["per-sample peaks.bed or peak calls"],
+        "allowed_outputs": ["consensus_peaks.bed", "peakset provenance"],
+        "required_downstream_output": "peak_matrices/<dataset_id>/peaks.bed",
+        "next_cellnote_skill": "normalize-to-peak-matrix"
+      }
+    },
+    {
+      "id": "gptomics-single-cell-atac",
+      "kind": "agent_skill",
+      "display_name": "GPTomics Single-cell ATAC",
+      "source": {
+        "repo_or_url": "GPTomics/bioSkills",
+        "path": "atac-seq/single-cell-atac",
+        "ref": "main",
+        "url": "https://github.com/GPTomics/bioSkills/tree/main/atac-seq/single-cell-atac",
+        "raw_skill_url": "https://raw.githubusercontent.com/GPTomics/bioSkills/main/atac-seq/single-cell-atac/SKILL.md"
+      },
+      "license": "repository/license review required before vendoring",
+      "trust": {
+        "level": "approved_reference",
+        "rationale": [
+          "Explicitly targets 10x scATAC and 10x Multiome with Signac, ArchR, SnapATAC2, and Cell Ranger ATAC/ARC ecosystems.",
+          "Best match for modality-specific ATAC routing before canonical peak matrix handoff."
+        ]
+      },
+      "modalities": ["scATAC", "multiome_ATAC"],
+      "roles": ["single_cell_atac_qc", "multiome_atac_side", "peak_matrix_generation", "doublet_detection"],
+      "core_for": ["scatac_fragments", "scatac_peak_matrix", "multiome"],
+      "cellnote_contract": {
+        "inputs": ["fragments.tsv.gz, 10x ATAC outputs, 10x Multiome ATAC side, peak matrix"],
+        "allowed_outputs": ["atac.h5ad", "cell_x_peak.npz", "peaks.bed", "qc_summary.json"],
+        "required_downstream_output": "peak_matrices/<dataset_id>/cell_x_peak.npz",
+        "next_cellnote_skill": "normalize-to-peak-matrix"
+      }
+    },
+    {
+      "id": "gptomics-motif-deviation",
+      "kind": "agent_skill",
+      "display_name": "GPTomics Motif Deviation",
+      "source": {
+        "repo_or_url": "GPTomics/bioSkills",
+        "path": "atac-seq/motif-deviation",
+        "ref": "main",
+        "url": "https://github.com/GPTomics/bioSkills/tree/main/atac-seq/motif-deviation",
+        "raw_skill_url": "https://raw.githubusercontent.com/GPTomics/bioSkills/main/atac-seq/motif-deviation/SKILL.md"
+      },
+      "license": "repository/license review required before vendoring",
+      "trust": {
+        "level": "optional_downstream_reference",
+        "rationale": [
+          "Useful for biological validation of learned accessibility representations.",
+          "Not required for canonical peak matrix generation."
+        ]
+      },
+      "modalities": ["scATAC", "multiome_ATAC"],
+      "roles": ["motif_activity", "biological_evaluation"],
+      "core_for": [],
+      "cellnote_contract": {
+        "inputs": ["peak matrix plus motif annotation"],
+        "allowed_outputs": ["motif activity scores", "evaluation report"],
+        "next_cellnote_skill": "handoff-pipeline"
+      }
+    },
+    {
+      "id": "gptomics-differential-accessibility",
+      "kind": "agent_skill",
+      "display_name": "GPTomics Differential Accessibility",
+      "source": {
+        "repo_or_url": "GPTomics/bioSkills",
+        "path": "atac-seq/differential-accessibility",
+        "ref": "main",
+        "url": "https://github.com/GPTomics/bioSkills/tree/main/atac-seq/differential-accessibility",
+        "raw_skill_url": "https://raw.githubusercontent.com/GPTomics/bioSkills/main/atac-seq/differential-accessibility/SKILL.md"
+      },
+      "license": "repository/license review required before vendoring",
+      "trust": {
+        "level": "optional_downstream_reference",
+        "rationale": [
+          "Useful for downstream benchmark tasks and pseudobulk evaluation.",
+          "Should not be used to decide the universal feature vocabulary."
+        ]
+      },
+      "modalities": ["scATAC", "multiome_ATAC", "bulk_ATAC"],
+      "roles": ["differential_accessibility", "benchmark_eval"],
+      "core_for": [],
+      "cellnote_contract": {
+        "inputs": ["cluster labels, sample metadata, peak counts"],
+        "allowed_outputs": ["DA tables", "benchmark metrics"],
+        "next_cellnote_skill": "handoff-pipeline"
+      }
+    },
+    {
+      "id": "gptomics-co-accessibility",
+      "kind": "agent_skill",
+      "display_name": "GPTomics Co-accessibility",
+      "source": {
+        "repo_or_url": "GPTomics/bioSkills",
+        "path": "atac-seq/co-accessibility",
+        "ref": "main",
+        "url": "https://github.com/GPTomics/bioSkills/tree/main/atac-seq/co-accessibility",
+        "raw_skill_url": "https://raw.githubusercontent.com/GPTomics/bioSkills/main/atac-seq/co-accessibility/SKILL.md"
+      },
+      "license": "repository/license review required before vendoring",
+      "trust": {
+        "level": "optional_downstream_reference",
+        "rationale": [
+          "Useful for enhancer-gene and regulatory graph evaluation.",
+          "Not required for MVP preprocessing."
+        ]
+      },
+      "modalities": ["scATAC", "multiome_ATAC"],
+      "roles": ["co_accessibility", "regulatory_graph_eval"],
+      "core_for": [],
+      "cellnote_contract": {
+        "inputs": ["peak counts and embeddings"],
+        "allowed_outputs": ["co-accessibility links", "graph evaluation report"],
+        "next_cellnote_skill": "handoff-pipeline"
+      }
+    },
+    {
+      "id": "gptomics-enhancer-gene-linking",
+      "kind": "agent_skill",
+      "display_name": "GPTomics Enhancer-gene Linking",
+      "source": {
+        "repo_or_url": "GPTomics/bioSkills",
+        "path": "atac-seq/enhancer-gene-linking",
+        "ref": "main",
+        "url": "https://github.com/GPTomics/bioSkills/tree/main/atac-seq/enhancer-gene-linking",
+        "raw_skill_url": "https://raw.githubusercontent.com/GPTomics/bioSkills/main/atac-seq/enhancer-gene-linking/SKILL.md"
+      },
+      "license": "repository/license review required before vendoring",
+      "trust": {
+        "level": "optional_downstream_reference",
+        "rationale": [
+          "Useful for multiome evaluation where RNA and ATAC are paired.",
+          "Can validate whether learned ATAC features capture gene regulatory signal."
+        ]
+      },
+      "modalities": ["multiome", "scATAC"],
+      "roles": ["enhancer_gene_linking", "multiome_eval"],
+      "core_for": [],
+      "cellnote_contract": {
+        "inputs": ["ATAC features, RNA expression, gene annotation"],
+        "allowed_outputs": ["enhancer-gene links", "validation report"],
+        "next_cellnote_skill": "handoff-pipeline"
+      }
+    },
+    {
+      "id": "gptomics-nucleosome-positioning",
+      "kind": "agent_skill",
+      "display_name": "GPTomics Nucleosome Positioning",
+      "source": {
+        "repo_or_url": "GPTomics/bioSkills",
+        "path": "atac-seq/nucleosome-positioning",
+        "ref": "main",
+        "url": "https://github.com/GPTomics/bioSkills/tree/main/atac-seq/nucleosome-positioning",
+        "raw_skill_url": "https://raw.githubusercontent.com/GPTomics/bioSkills/main/atac-seq/nucleosome-positioning/SKILL.md"
+      },
+      "license": "repository/license review required before vendoring",
+      "trust": {
+        "level": "optional_qc_reference",
+        "rationale": [
+          "Useful for fragment-size diagnostics and ATAC library QC.",
+          "Secondary to canonical single-cell QC for MVP."
+        ]
+      },
+      "modalities": ["bulk_ATAC", "scATAC", "multiome_ATAC"],
+      "roles": ["fragment_size_qc", "nucleosome_signal"],
+      "core_for": [],
+      "cellnote_contract": {
+        "inputs": ["fragments or alignments"],
+        "allowed_outputs": ["nucleosome QC metrics", "diagnostic plots"],
+        "next_cellnote_skill": "normalize-to-peak-matrix"
+      }
+    },
+    {
+      "id": "gptomics-footprinting",
+      "kind": "agent_skill",
+      "display_name": "GPTomics Footprinting",
+      "source": {
+        "repo_or_url": "GPTomics/bioSkills",
+        "path": "atac-seq/footprinting",
+        "ref": "main",
+        "url": "https://github.com/GPTomics/bioSkills/tree/main/atac-seq/footprinting",
+        "raw_skill_url": "https://raw.githubusercontent.com/GPTomics/bioSkills/main/atac-seq/footprinting/SKILL.md"
+      },
+      "license": "repository/license review required before vendoring",
+      "trust": {
+        "level": "optional_downstream_reference",
+        "rationale": [
+          "Useful for motif-level mechanistic validation.",
+          "Not part of default preprocessing because it is compute- and assumption-heavy."
+        ]
+      },
+      "modalities": ["bulk_ATAC", "scATAC"],
+      "roles": ["footprinting", "mechanistic_eval"],
+      "core_for": [],
+      "cellnote_contract": {
+        "inputs": ["bias-corrected ATAC signal and motif sites"],
+        "allowed_outputs": ["footprint reports"],
+        "next_cellnote_skill": "handoff-pipeline"
+      }
+    },
+    {
+      "id": "gptomics-deep-learning-atac",
+      "kind": "agent_skill",
+      "display_name": "GPTomics Deep Learning ATAC",
+      "source": {
+        "repo_or_url": "GPTomics/bioSkills",
+        "path": "atac-seq/deep-learning-atac",
+        "ref": "main",
+        "url": "https://github.com/GPTomics/bioSkills/tree/main/atac-seq/deep-learning-atac",
+        "raw_skill_url": "https://raw.githubusercontent.com/GPTomics/bioSkills/main/atac-seq/deep-learning-atac/SKILL.md"
+      },
+      "license": "repository/license review required before vendoring",
+      "trust": {
+        "level": "optional_model_reference",
+        "rationale": [
+          "Useful for comparing with existing ATAC deep learning model practices.",
+          "Not used to replace our self-supervised FM prototype."
+        ]
+      },
+      "modalities": ["bulk_ATAC", "scATAC"],
+      "roles": ["model_baseline_reference", "variant_effect_eval"],
+      "core_for": [],
+      "cellnote_contract": {
+        "inputs": ["sequence-centered peaks or accessibility matrices"],
+        "allowed_outputs": ["baseline comparison notes", "interpretability reports"],
+        "next_cellnote_skill": "handoff-pipeline"
+      }
+    },
+    {
+      "id": "gptomics-allele-specific-accessibility",
+      "kind": "agent_skill",
+      "display_name": "GPTomics Allele-specific Accessibility",
+      "source": {
+        "repo_or_url": "GPTomics/bioSkills",
+        "path": "atac-seq/allele-specific-accessibility",
+        "ref": "main",
+        "url": "https://github.com/GPTomics/bioSkills/tree/main/atac-seq/allele-specific-accessibility",
+        "raw_skill_url": "https://raw.githubusercontent.com/GPTomics/bioSkills/main/atac-seq/allele-specific-accessibility/SKILL.md"
+      },
+      "license": "repository/license review required before vendoring",
+      "trust": {
+        "level": "optional_downstream_reference",
+        "rationale": [
+          "Useful for variant-aware evaluation of ATAC accessibility models.",
+          "Not part of default preprocessing because it requires genotype/phasing-aware inputs."
+        ]
+      },
+      "modalities": ["bulk_ATAC", "scATAC", "multiome_ATAC"],
+      "roles": ["allele_specific_accessibility", "variant_aware_eval"],
+      "core_for": [],
+      "cellnote_contract": {
+        "inputs": ["variant-aware ATAC reads, genotype/phasing metadata, peak intervals"],
+        "allowed_outputs": ["allele-specific accessibility tables", "variant-aware evaluation report"],
+        "next_cellnote_skill": "handoff-pipeline"
+      }
+    },
+    {
+      "id": "official-snapatac2",
+      "kind": "reference_source",
+      "display_name": "Official SnapATAC2 Documentation",
+      "source": {
+        "repo_or_url": "https://scverse.org/SnapATAC2/",
+        "path": "tutorials and API documentation",
+        "ref": "stable docs",
+        "url": "https://scverse.org/SnapATAC2/"
+      },
+      "license": "official documentation; cite URL",
+      "trust": {
+        "level": "official_reference",
+        "rationale": [
+          "Official scverse SnapATAC2 docs for fragment import, preprocessing, clustering, peak calling, and multiome tutorials."
+        ]
+      },
+      "modalities": ["scATAC", "multiome_ATAC"],
+      "roles": ["snapatac2_api_reference", "fragment_processing", "multiome_atac_side"],
+      "core_for": ["scatac_fragments", "multiome"],
+      "cellnote_contract": {
+        "inputs": ["fragments.tsv.gz or AnnData"],
+        "allowed_outputs": ["ATAC AnnData", "peak calls", "QC metrics"],
+        "next_cellnote_skill": "normalize-to-peak-matrix"
+      }
+    },
+    {
+      "id": "official-muon",
+      "kind": "reference_source",
+      "display_name": "Official muon Documentation",
+      "source": {
+        "repo_or_url": "https://muon.scverse.org/",
+        "path": "documentation and tutorials",
+        "ref": "stable docs",
+        "url": "https://muon.scverse.org/"
+      },
+      "license": "official documentation; cite URL",
+      "trust": {
+        "level": "official_reference",
+        "rationale": [
+          "Official scverse multimodal omics framework; supports MuData and multimodal RNA/ATAC analysis."
+        ]
+      },
+      "modalities": ["multiome", "scRNA", "multiome_ATAC"],
+      "roles": ["mudata_io", "multiome_pairing", "joint_embedding_reference"],
+      "core_for": ["multiome"],
+      "cellnote_contract": {
+        "inputs": ["RNA AnnData and ATAC AnnData"],
+        "allowed_outputs": ["multiome.h5mu", "paired-pass metadata"],
+        "next_cellnote_skill": "multiome-qc"
+      }
+    },
+    {
+      "id": "official-encode-atac-standards",
+      "kind": "reference_source",
+      "display_name": "ENCODE ATAC-seq Standards",
+      "source": {
+        "repo_or_url": "https://www.encodeproject.org/atac-seq/",
+        "path": "ATAC-seq data standards and processing pipeline",
+        "ref": "current web standard",
+        "url": "https://www.encodeproject.org/atac-seq/"
+      },
+      "license": "official documentation; cite URL",
+      "trust": {
+        "level": "official_reference",
+        "rationale": [
+          "Official ENCODE ATAC standards for TSS enrichment, FRiP, depth, read-length, genome build, and processing expectations."
+        ]
+      },
+      "modalities": ["bulk_ATAC", "scATAC", "multiome_ATAC"],
+      "roles": ["qc_threshold_reference", "encode_standards"],
+      "core_for": ["scatac_fragments", "multiome"],
+      "cellnote_contract": {
+        "inputs": ["QC metric tables"],
+        "allowed_outputs": ["threshold decisions", "review_queue entries"],
+        "next_cellnote_skill": "scatac-fragment-qc or scatac-peak-matrix"
+      }
+    },
+    {
+      "id": "official-scanpy",
+      "kind": "reference_source",
+      "display_name": "Official Scanpy Documentation",
+      "source": {
+        "repo_or_url": "https://scanpy.readthedocs.io/",
+        "path": "tutorials and API documentation",
+        "ref": "stable docs",
+        "url": "https://scanpy.readthedocs.io/en/stable/"
+      },
+      "license": "official documentation; cite URL",
+      "trust": {
+        "level": "official_reference",
+        "rationale": [
+          "Official Scanpy documentation for scRNA QC, preprocessing, clustering, and plotting."
+        ]
+      },
+      "modalities": ["scRNA", "multiome_RNA"],
+      "roles": ["rna_qc_reference", "scanpy_api_reference"],
+      "core_for": ["multiome", "scrna_reference"],
+      "cellnote_contract": {
+        "inputs": ["RNA AnnData or 10x matrices"],
+        "allowed_outputs": ["rna.h5ad", "QC figures", "cluster labels"],
+        "next_cellnote_skill": "RNA supporting QC"
+      }
+    }
+  ]
+}

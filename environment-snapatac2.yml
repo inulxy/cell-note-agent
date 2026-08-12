@@ -1,0 +1,27 @@
+# CellNote snapatac2 env: fragment-based scATAC QC + MACS3 peak calling
+# (scripts/scatac_fragment_qc.py). snapatac2 pulls anndata/polars/pyarrow/
+# numpy/pandas itself; keep this env lean.
+# Direct-dependency pins verified against PyPI on 2026-08-08
+# (snapatac2 2.9.0 requires Python >=3.10,<3.15).
+name: snapatac2
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pip
+  - pip:
+      - snapatac2==2.9.0
+      - macs3==3.0.4
+      # snapatac2 imports umap lazily at runtime (tl.umap); it is NOT pulled
+      # in by pip automatically -- keep this pinned here.
+      - umap-learn>=0.5.12,<0.6
+      - matplotlib>=3.10,<4
+      # snap.pl.umap(...).write_image needs kaleido; plot export failures are
+      # already tolerated by the script (warning only).
+      - kaleido==0.2.1
+      # multiome fragments branch (multiome_qc.py pair-check/qc-rna) reads the
+      # paired RNA matrix with scanpy in this same env.
+      - scanpy==1.12.3
+      # snapatac2 writes zstd-compressed h5ad; reading it back in-memory via
+      # h5py/anndata (multiome intersect paired-subset) needs this plugin.
+      - hdf5plugin>=5,<8

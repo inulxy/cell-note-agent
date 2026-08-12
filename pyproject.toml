@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cell-note"
+version = "0.1.0"
+description = "Stage-aware discovery agent for public scATAC-seq and paired RNA-ATAC multiome datasets"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+cell-note = "sc_epi_curator.cli:main"
+cell-note-step = "cell_note_agent.step_api:main"
+cell-note-pi = "cell_note_agent.pi_bridge:main"
+cell-note-external-skills = "cell_note_agent.external_skills:main"
+
+[tool.setuptools.packages.find]
+include = ["cell_note_agent*", "sc_epi_curator*"]
+
+[tool.setuptools.package-data]
+sc_epi_curator = ["fixtures/*.json"]
