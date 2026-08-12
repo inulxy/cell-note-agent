@@ -16,7 +16,6 @@
     }
   ],
   "reporting_artifacts": [
-    "figures/benchmark_overview.png",
     "benchmark1_step_only/benchmark1_li2023a_runs.csv",
     "benchmark1_step_only/benchmark1_summary.csv",
     "benchmark2_skills_comparison/benchmark2_runs.csv",

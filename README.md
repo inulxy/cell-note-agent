@@ -41,10 +41,6 @@ routes: Li2023a existing peak-matrix QC and Li2023b fragments-to-peak-matrix
 processing. The complete compact package is available in
 [`agent_benchmark/`](agent_benchmark/README.md).
 
-<p align="center">
-  <img src="agent_benchmark/figures/benchmark_overview.png" width="100%" alt="Combined CellNote Agent benchmark results">
-</p>
-
 ### Benchmark design
 
 | Benchmark | Comparison | Main question |
@@ -82,19 +78,6 @@ All twelve Benchmark 2 runs passed the common file validator and network audit.
 However, one external Li2023a repeat produced a different cell set despite
 passing file-level validation, reducing its modal-outcome consistency to 2/3.
 This distinction separates **valid files** from **stable workflow semantics**.
-
-### Take-home result
-
-CellNote skills turn model planning into bounded and auditable execution. The
-largest gains appear in validated delivery, repeat consistency, and semantic
-stability rather than in claiming a universal runtime advantage for every
-route.
-
-> **Interpretation limits:** Most method cells use three repeats; the Li2023b
-> model-only condition contains one failed attempt. No significance testing was
-> performed. Cell retention is descriptive rather than a stand-alone biological
-> quality score, and Li2023b runtime comparisons reflect different semantic
-> scopes between CellNote and the external skill.
 
 The package includes baseline code, compact run-level and aggregate CSV files,
 figures, design materials, a package manifest, and SHA-256 checksums. Large

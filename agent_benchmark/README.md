@@ -23,8 +23,6 @@ agent_benchmark/
 │   └── figures/
 │       ├── reproducibility_outcomes.png
 │       └── runtime_memory.png
-├── figures/
-│   └── benchmark_overview.png
 ├── PACKAGE_MANIFEST.json
 └── SHA256SUMS
 ```
