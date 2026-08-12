@@ -1,0 +1,16 @@
+{
+  "ours_cells": 64225,
+  "external_cells": 66354,
+  "cell_intersection": 64225,
+  "cell_jaccard": 0.9679145190945535,
+  "ours_cells_subset_external": true,
+  "external_only_cells": 2129,
+  "ours_exact_peaks": 368353,
+  "external_exact_peaks": 380576,
+  "exact_peak_intersection": 150515,
+  "exact_peak_jaccard": 0.2515231929734264,
+  "ours_peak_bp": 184544853,
+  "external_peak_bp": 190668576,
+  "peak_intersection_bp": 171007672,
+  "peak_bp_jaccard": 0.8374282611434897
+}

@@ -10,8 +10,7 @@
 CellNote Agent turns natural-language requests or existing local datasets into
 auditable analysis plans and deterministic pipeline executions. Its canonical
 output is an independent, per-dataset **GRCh38 cell-by-peak matrix** together
-with a QC summary, data card, and manifest. The current workflow does not
-perform cCRE mapping, tokenization, or cross-dataset consensus peak generation.
+with a QC summary, data card, and manifest.
 
 <p align="center">
   <img src="figures/web_agent_ui.png" width="100%" alt="CellNote Agent web interface">
@@ -34,6 +33,73 @@ perform cCRE mapping, tokenization, or cross-dataset consensus peak generation.
 The language model is used for intent interpretation, evidence-grounded
 clarification, and readable reports. It does not directly fabricate
 bioinformatics outputs or bypass the local execution gates.
+
+## Benchmarks
+
+The two benchmarks use the same StepFun model and two representative scATAC
+routes: Li2023a existing peak-matrix QC and Li2023b fragments-to-peak-matrix
+processing. The complete compact package is available in
+[`agent_benchmark/`](agent_benchmark/README.md).
+
+<p align="center">
+  <img src="agent_benchmark/figures/benchmark_overview.png" width="100%" alt="Combined CellNote Agent benchmark results">
+</p>
+
+### Benchmark design
+
+| Benchmark | Comparison | Main question |
+|---|---|---|
+| **1** | StepFun model only vs. StepFun + CellNote skills | Do constrained, deterministic skills improve execution efficiency and validated delivery over open-ended tool use? |
+| **2** | StepFun + CellNote skills vs. StepFun + frozen public skills | Do CellNote's route-specific skills improve repeat consistency and preserve stable workflow semantics relative to reusable public skills? |
+
+The Benchmark 1 model-only baseline can use generic shell and Python tools with
+SnapATAC2, MACS3, Scanpy, and AnnData, but cannot access CellNote scripts,
+skills, previous outputs, or prior QC summaries. Benchmark 2 uses the frozen
+K-Dense-AI `anndata` skill for Li2023a and the GPTomics
+`bio-atac-seq-single-cell-atac` skill for Li2023b.
+
+### Benchmark 1 summary
+
+| Dataset / route | StepFun only | StepFun + CellNote skills | Main result |
+|---|---:|---:|---|
+| **Li2023a peak-matrix QC** | 28.3 ± 12.4 min; 80.6 ± 12.2 GB | 8.9 ± 0.3 min; 43.2 ± 0.0 GB | **3.17× faster** and **46.4% lower peak RSS** with CellNote skills |
+| **Li2023b fragments → peaks** | One attempt exceeded 12 h with no output | 75.4 ± 12.1 min; 3/3 validated, repeat-identical outputs | CellNote converted a failed open-ended run into a bounded, reproducible delivery |
+
+For Li2023a, the model-only process returned normally in 3/3 runs, but package
+validation and repeat-hash consistency were not independently reported. Its
+100% cell retention is therefore not interpreted as evidence of better QC.
+CellNote produced a validated GRCh38 package containing 731,023 cells and
+544,729 peaks in all three repeats.
+
+### Benchmark 2 summary
+
+| Dataset / route | CellNote skills | Frozen public skills | Interpretation |
+|---|---:|---:|---|
+| **Li2023a peak-matrix QC** | 3/3 modal outcome; 8.9 min; 43.2 GB | 2/3 modal outcome; 25.4 min; 107.4 GB | CellNote was faster, used less memory, and preserved repeat-identical semantics |
+| **Li2023b fragments → peaks** | 3/3 modal outcome; 75.4 min; 30.5 GB | 3/3 modal outcome; 65.3 min; 25.0 GB | Both were repeat-consistent, but the external route omitted clustering and doublet removal, so runtime is not a like-for-like comparison |
+
+All twelve Benchmark 2 runs passed the common file validator and network audit.
+However, one external Li2023a repeat produced a different cell set despite
+passing file-level validation, reducing its modal-outcome consistency to 2/3.
+This distinction separates **valid files** from **stable workflow semantics**.
+
+### Take-home result
+
+CellNote skills turn model planning into bounded and auditable execution. The
+largest gains appear in validated delivery, repeat consistency, and semantic
+stability rather than in claiming a universal runtime advantage for every
+route.
+
+> **Interpretation limits:** Most method cells use three repeats; the Li2023b
+> model-only condition contains one failed attempt. No significance testing was
+> performed. Cell retention is descriptive rather than a stand-alone biological
+> quality score, and Li2023b runtime comparisons reflect different semantic
+> scopes between CellNote and the external skill.
+
+The package includes baseline code, compact run-level and aggregate CSV files,
+figures, design materials, a package manifest, and SHA-256 checksums. Large
+biological inputs, generated matrices, runtime environments, and credentials
+are excluded.
 
 ## Workflow
 

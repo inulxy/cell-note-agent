@@ -16,6 +16,7 @@ __pycache__/
 *.py[cod]
 ._*
 .DS_Store
+.Rhistory
 outputs/
 
 # Generated or large analysis artifacts
@@ -27,8 +28,9 @@ demo_pbmc/processed/
 runs/
 reference/
 corpus/
-agent_benchmark/
 *benchmark*/
+!agent_benchmark/
+!agent_benchmark/**
 # golden fixture binaries: fetched via fixtures/fetch_fixtures.sh, never committed
 fixtures/*.h5
 fixtures/*.tsv.gz

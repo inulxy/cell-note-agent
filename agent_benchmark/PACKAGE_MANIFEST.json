@@ -1,0 +1,32 @@
+{
+  "schema_version": "cellnote.agent_benchmark.package.v1",
+  "created_at": "2026-08-12",
+  "benchmarks": [
+    {
+      "id": "benchmark1",
+      "name": "StepFun only vs. CellNote skills",
+      "source_directory": "Desktop/step_only_agent",
+      "package_directory": "benchmark1_step_only"
+    },
+    {
+      "id": "benchmark2",
+      "name": "CellNote skills vs. frozen public external skills",
+      "source_directory": "Desktop/benchmark2",
+      "package_directory": "benchmark2_skills_comparison"
+    }
+  ],
+  "reporting_artifacts": [
+    "figures/benchmark_overview.png",
+    "benchmark1_step_only/benchmark1_li2023a_runs.csv",
+    "benchmark1_step_only/benchmark1_summary.csv",
+    "benchmark2_skills_comparison/benchmark2_runs.csv",
+    "benchmark2_skills_comparison/benchmark2_summary.csv"
+  ],
+  "excluded": [
+    ".DS_Store",
+    "large source datasets",
+    "generated matrices and intermediate outputs",
+    "runtime environments and caches",
+    "API credentials"
+  ]
+}

@@ -1,0 +1,5 @@
+dataset,input_kind,method,attempted_repeats,process_completion,validated_delivery,repeat_consistency,runtime_mean_min,runtime_sd_min,peak_rss_mean_gb,peak_rss_sd_gb,model_calls_mean,model_calls_sd,cell_retention,final_output
+Li2023a,peak_matrix,step_only,3,3/3,not_independently_reported,not_established,28.3,12.4,80.6,12.2,22.0,3.6,1.000,output_directories_reported
+Li2023a,peak_matrix,step_ours,3,3/3,3/3,3/3_identical,8.9,0.3,43.2,0.0,18.7,1.5,0.658,"731023 cells x 544729 peaks"
+Li2023b,fragments,step_only,1,failed_after_more_than_12_hours,0/1,not_applicable,>720,,not_available,,not_available,,not_available,no_output
+Li2023b,fragments,step_ours,3,3/3,3/3,3/3_identical,75.4,12.1,30.5,0.0,38.7,4.7,0.570,"64225 cells x 368353 peaks"

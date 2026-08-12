@@ -1,0 +1,4 @@
+run_id,returncode,runtime_min,peak_rss_gb,model_calls,cell_retention
+Li2023a_repeat1_20260812_024106,0,30.01,66.572,23,1.0
+Li2023a_repeat2_20260812_024106,0,39.78,87.660,25,1.0
+Li2023a_repeat3_20260812_024106,0,15.13,87.659,18,1.0
